@@ -1,5 +1,5 @@
 import re
-from brat.ssplit import regex_sentence_boundary_gen
+from .ssplit import regex_sentence_boundary_gen
 
 
 

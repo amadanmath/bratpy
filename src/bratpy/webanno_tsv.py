@@ -616,8 +616,8 @@ if __name__ == "__main__":
     import sys
 
     if len(sys.argv) == 1:
-        print("python -m brat.webanno_tsv webanno_header.tsv brat_doc \tconvert brat to WebAnno tsv")
-        print("python -m brat.webanno_tsv webanno_doc.tsv [text.txt]  \tconvert WebAnno tsv to brat")
+        print("python -m bratpy.webanno_tsv webanno_header.tsv brat_doc \tconvert brat to WebAnno tsv")
+        print("python -m bratpy.webanno_tsv webanno_doc.tsv [text.txt]  \tconvert WebAnno tsv to brat")
         sys.exit(1)
 
     with open(sys.argv[1], "rt") as r:
@@ -638,7 +638,7 @@ if __name__ == "__main__":
     else:
         headers, vals = headers_from_lines(lines)
         doc = TextAnnotations(sys.argv[2])
-        from brat.sudachisplit import find_sentence_standoffs, find_token_standoffs
+        from .sudachisplit import find_sentence_standoffs, find_token_standoffs
         text = doc.get_document_text()
         sentence_offsets = list(find_sentence_standoffs(text))
         token_offsets = list(find_token_standoffs(text))
