@@ -3,6 +3,9 @@ from collections import defaultdict
 from .annotation import IdedAnnotation
 
 
+SIMSTRING_DEFAULT_UNICODE = False
+
+
 def _parse_drawing(maybe_attribute_text):
     if maybe_attribute_text:
         attributes = dict(item.strip().split(':') for item in maybe_attribute_text[0].split(','))
@@ -22,13 +25,21 @@ def parse_visual_conf_file(filename):
     return parse_visual_conf(text)
 
 
-_SECTION_RE = re.compile(r'^\s*\[(.*?)\]', flags=re.MULTILINE)
-def parse_visual_conf(text):
+def parse_tools_conf_file(filename):
     """
-    Reads simple brat visual configuration files.
-    Just simple ones. No macros, defaults...
+    Reads simple brat tools configuration files.
+    For now, just normalizations
     """
 
+    with open(filename, "rt") as r:
+        text = r.read()
+    return parse_tools_conf(text)
+
+
+_SECTION_RE = re.compile(r'^\s*\[(.*?)\]', flags=re.MULTILINE)
+
+
+def _parse_sections(text):
     it = iter(_SECTION_RE.split(text))
     next(it)
 
@@ -37,6 +48,17 @@ def parse_visual_conf(text):
                 (line.strip() for line in text.strip().split("\n"))
             if line and not line.startswith('#')
         ]) for key, text in zip(it, it))
+    return sections
+
+
+def parse_visual_conf(text):
+    """
+    Reads simple brat visual configuration files.
+    Just simple ones. No macros, defaults...
+    """
+
+    sections = _parse_sections(text)
+
     labels = {
         name.strip(): [label.strip() for label in labels]
         for name, *labels
@@ -54,6 +76,30 @@ def parse_visual_conf(text):
         }
         for type in set(labels) | set(drawing)
     }
+    return entries
+
+
+def parse_tools_conf(text):
+    """
+    Reads simple brat tools.conf configuration files.
+    Currently just reads the normalizations section.
+    """
+
+    sections = _parse_sections(text)
+    entries = []
+    for line in sections.get('normalization', []):
+        name, rest = line.split(None, 1)
+        values = {}
+        for value in rest.strip().split():
+            key, _, value = value.partition(':')
+            values[key] = value
+        entries.append((
+            name,
+            values.get('<URL>'),
+            values.get('<URLBASE>'),
+            values.get('DB'),
+            values.get('<UNICODE>') or SIMSTRING_DEFAULT_UNICODE,
+        ))
     return entries
 
 
