@@ -2,7 +2,7 @@ from .simplesplit import find_sentence_standoffs, find_token_standoffs
 
 
 
-def get_doc_json(doc, sentence_standoffs=None, token_standoffs=None, norm_urls=None):
+def get_doc_json(doc, sentence_standoffs=None, token_standoffs=None):
     text = doc.get_document_text()
 
     if sentence_standoffs is None:
@@ -50,7 +50,6 @@ def get_doc_json(doc, sentence_standoffs=None, token_standoffs=None, norm_urls=N
         "equivs": [],
         "normalizations": normalization_doc_data,
         "comments": comment_doc_data,
-        "norm_urls": norm_urls or {},
         "text": text,
         "annfile": str(doc),
         "token_offsets": token_standoffs,
