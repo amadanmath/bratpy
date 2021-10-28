@@ -86,21 +86,23 @@ def parse_tools_conf(text):
     """
 
     sections = _parse_sections(text)
-    entries = []
+    norms = []
     for line in sections.get('normalization', []):
         name, rest = line.split(None, 1)
         values = {}
         for value in rest.strip().split():
             key, _, value = value.partition(':')
             values[key] = value
-        entries.append((
+        norms.append((
             name,
             values.get('<URL>'),
             values.get('<URLBASE>'),
             values.get('DB'),
             values.get('<UNICODE>') or SIMSTRING_DEFAULT_UNICODE,
         ))
-    return entries
+    return {
+        "normalization": norms,
+    }
 
 
 _NUMBERLESS_RE = re.compile(r'(.*?)\d*$')
