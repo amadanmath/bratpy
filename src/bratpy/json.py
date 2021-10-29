@@ -68,16 +68,7 @@ def get_doc_json(doc, sentence_standoffs=None, token_standoffs=None):
     return doc_data
 
 
-def get_coll_json(visual_conf):
-    norm_coll_data = [
-        # [
-        #     "UMLS",
-        #     "https://www.nlm.nih.gov/research/umls/",
-        #     "https://uts.nlm.nih.gov//metathesaurus.html?cui=%s",
-        #     None,
-        #     True
-        # ]
-    ]
+def get_coll_json(visual_conf, tools_conf):
     # event_coll_data = [
     #     # {
     #     #     "name": "Catalysis",
@@ -284,7 +275,7 @@ def get_coll_json(visual_conf):
         # "description": "",
         # "search_config": [],
         # "disambiguator_config": [],
-        # "normalization_config": norm_coll_data,
+        "normalization_config": tools_conf["normalization"],
         # "annotation_logging": False,
         # "ner_taggers": [],
 
