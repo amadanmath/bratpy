@@ -529,7 +529,7 @@ def to_lines(doc, headers, sentence_offsets, token_offsets, vals):
         val = ann.type
         header, slot = (
             vals.get(val) or
-            (ann.id in trigger_set and (default_event_header_slot, None)) or
+            (ann.id in trigger_set and (default_event_header, None)) or
             vals["*"]
         )
         for standoff in ann.spans:
@@ -608,6 +608,7 @@ def to_lines(doc, headers, sentence_offsets, token_offsets, vals):
     lines = [
         "#FORMAT=WebAnno TSV 3.3\n",
         *header_lines,
+        "\n",
         *(line for sentence_lines in sentence_blocks for line in sentence_lines),
     ]
     return lines
@@ -627,14 +628,20 @@ if __name__ == "__main__":
         print("Not a WebAnno TSV")
         sys.exit(1)
     if full_tsv:
+        text = None
+        output_text = False
         if len(sys.argv) >= 3:
-            with open(sys.argv[2], "rt") as r:
-                text = r.read()
-        else:
-            text = None
+            if sys.argv[2] == '-':
+                output_text = True
+            else:
+                with open(sys.argv[2], "rt") as r:
+                    text = r.read()
 
         doc = from_lines(lines, text)
-        print(doc, end="")
+        if output_text:
+            print(doc.get_document_text())
+        else:
+            print(doc, end="")
     else:
         headers, vals = headers_from_lines(lines)
         doc = TextAnnotations(sys.argv[2])
