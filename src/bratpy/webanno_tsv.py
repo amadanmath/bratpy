@@ -522,9 +522,10 @@ def to_lines(doc, headers, sentence_offsets, token_offsets, vals):
     ), None)
     trigger_set = set(ann.id for ann in doc.get_triggers())
 
-    dis_id = 0
+    dis_id = 1
     dis_ids_map = {}
     entity_map = {}
+    token_starts = [start for start, end in token_offsets]
     for ann in doc.get_textbounds():
         val = ann.type
         header, slot = (
@@ -534,8 +535,10 @@ def to_lines(doc, headers, sentence_offsets, token_offsets, vals):
         )
         for standoff in ann.spans:
             start, end = standoff
-            pos = bisect.bisect_left(token_offsets, standoff)
-            while pos <= len(token_offsets) and token_offsets[pos][0] < end:
+            pos = bisect.bisect(token_starts, start) - 1
+            if token_offsets[pos][1] <= start:
+                pos += 1
+            while pos < len(token_offsets) and token_offsets[pos][0] < end:
                 tok_start, tok_end = token_offsets[pos]
                 annolist = annolists_by_tok_id[pos]
                 if tok_start < start:
